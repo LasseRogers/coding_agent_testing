@@ -1,0 +1,47 @@
+"""
+Configuration constants for the Retro Snake Game.
+"""
+
+# Screen settings
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+FPS = 10
+
+# Header settings
+HEADER_HEIGHT = 60  # 3 grid cells (60 / 20 = 3)
+# Grid settings
+GRID_SIZE = 20
+GRID_WIDTH = SCREEN_WIDTH // GRID_SIZE
+GRID_HEIGHT = (SCREEN_HEIGHT - HEADER_HEIGHT) // GRID_SIZE
+# Colors (Retro palette)
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+GREEN = (0, 255, 0)
+DARK_GREEN = (0, 200, 0)
+RED = (255, 0, 0)
+YELLOW = (255, 255, 0)
+BLUE = (0, 100, 255)
+GRAY = (50, 50, 50)
+LIGHT_GRAY = (150, 150, 150)
+
+# Snake settings
+SNAKE_HEAD_COLOR = DARK_GREEN
+SNAKE_BODY_COLOR = GREEN
+SNAKE_START_LENGTH = 3
+SNAKE_INITIAL_POSITION = (GRID_WIDTH // 2, GRID_HEIGHT // 2)
+
+# Food settings
+FOOD_COLOR = RED
+FOOD_GLOW_COLOR = YELLOW
+
+# Score settings
+SCORE_PER_FOOD = 10
+LEVEL_UP_SCORE = 50
+
+# Font settings
+TITLE_FONT_SIZE = 48
+SCORE_FONT_SIZE = 36
+GAME_OVER_FONT_SIZE = 32
+MENU_FONT_SIZE = 24
+
+

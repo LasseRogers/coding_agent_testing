@@ -11,7 +11,8 @@ from config import (
     BLUE, GRAY, LIGHT_GRAY,
     GRID_SIZE,
     TITLE_FONT_SIZE, SCORE_FONT_SIZE, GAME_OVER_FONT_SIZE, MENU_FONT_SIZE,
-    SNAKE_HEAD_COLOR, SNAKE_BODY_COLOR, FOOD_COLOR, FOOD_GLOW_COLOR
+    SNAKE_HEAD_COLOR, SNAKE_BODY_COLOR, FOOD_COLOR, FOOD_GLOW_COLOR,
+    SPECIAL_FOOD_COLOR, SPECIAL_FOOD_GLOW_COLOR, SPECIAL_FOOD_DURATION_MS
 )
 
 
@@ -111,15 +112,41 @@ class Renderer:
         x = food.position[0] * GRID_SIZE + GRID_SIZE // 2
         y = food.position[1] * GRID_SIZE + GRID_SIZE // 2 + HEADER_HEIGHT
 
-        # Glow effect
-        for radius in range(5, 0, -1):
-            alpha_color = (*FOOD_GLOW_COLOR, max(0, 50 - radius * 10))
-            glow_surf = pygame.Surface((GRID_SIZE * 2, GRID_SIZE * 2), pygame.SRCALPHA)
-            pygame.draw.circle(glow_surf, (*FOOD_GLOW_COLOR[:3], 30), (GRID_SIZE, GRID_SIZE), radius * 2)
-            self.screen.blit(glow_surf, (x - GRID_SIZE, y - GRID_SIZE))
+        if food.is_special:
+            # Special food - yellow with blinking effect
+            remaining_ms = food.get_remaining_ms()
+            
+            # Blink faster as time runs out (last 2 seconds)
+            if remaining_ms < 2000:
+                # Blink every other frame when less than 2 seconds remain
+                blink_interval = remaining_ms / 10  # Very fast blink
+                if int(remaining_ms / blink_interval) % 2 == 0:
+                    return  # Skip drawing (blink effect)
+            
+            # Glow effect for special food
+            for radius in range(6, 0, -1):
+                alpha_color = (*SPECIAL_FOOD_GLOW_COLOR, max(0, 60 - radius * 10))
+                glow_surf = pygame.Surface((GRID_SIZE * 2, GRID_SIZE * 2), pygame.SRCALPHA)
+                pygame.draw.circle(glow_surf, (*SPECIAL_FOOD_GLOW_COLOR[:3], 40), (GRID_SIZE, GRID_SIZE), radius * 2)
+                self.screen.blit(glow_surf, (x - GRID_SIZE, y - GRID_SIZE))
 
-        # Food circle
-        pygame.draw.circle(self.screen, FOOD_COLOR, (x, y), GRID_SIZE // 2 - 2)
+            # Special food circle (larger and yellow)
+            pygame.draw.circle(self.screen, SPECIAL_FOOD_COLOR, (x, y), GRID_SIZE // 2)
+            
+            # Draw a star/asterisk in the center to indicate special
+            star_size = 4
+            pygame.draw.line(self.screen, BLACK, (x - star_size, y), (x + star_size, y), 2)
+            pygame.draw.line(self.screen, BLACK, (x, y - star_size), (x, y + star_size), 2)
+        else:
+            # Normal food - red with glow effect
+            for radius in range(5, 0, -1):
+                alpha_color = (*FOOD_GLOW_COLOR, max(0, 50 - radius * 10))
+                glow_surf = pygame.Surface((GRID_SIZE * 2, GRID_SIZE * 2), pygame.SRCALPHA)
+                pygame.draw.circle(glow_surf, (*FOOD_GLOW_COLOR[:3], 30), (GRID_SIZE, GRID_SIZE), radius * 2)
+                self.screen.blit(glow_surf, (x - GRID_SIZE, y - GRID_SIZE))
+
+            # Food circle
+            pygame.draw.circle(self.screen, FOOD_COLOR, (x, y), GRID_SIZE // 2 - 2)
 
     def _render_score(self, game):
         """Draw the score display (deprecated - use _render_header_stats instead)."""
@@ -224,4 +251,3 @@ class Renderer:
     def quit(self):
         """Clean up pygame resources."""
         pygame.quit()
-
